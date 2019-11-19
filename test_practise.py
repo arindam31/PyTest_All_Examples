@@ -30,4 +30,10 @@ def test_rbx():
 def test_mbx():
 	print ("This is an MBX test")
 	
+def test_random_no1(my_special_random_number):
+    print(my_special_random_number)
+    assert True
 	
+def test_random_no2(my_special_random_number):
+    print(my_special_random_number)
+    assert True
