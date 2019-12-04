@@ -60,7 +60,7 @@ def read_config(cfg):
 # the markers list includes the value. If yes, we execute the test.
 # Else, we skip it.
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(autouse=False)
 def auto_skip_if_incorrect_device(request):
     marker_names = {m.name for m in request.node.iter_markers()}
     data = request.getfixturevalue('read_config')
@@ -78,4 +78,29 @@ def my_special_random_number():
     return random.randint(1,100)
     
 
-
+@pytest.fixture(autouse=True)
+def check_device_type(request, read_config):
+    """Fixture functions can accept the request object to 
+    introspect the “requesting” test function, class or module context.
+    
+    This is also an example of how request can be used:
+    
+    request has a few properties which can be used. -----
+    *******************************************************
+    request.module.__name__: this will be the name of the test script calling.
+    request.scope: O/P can be 'function'
+    request.session: This gives a lot of information. Like exitstatus, testsfailed, testscollected
+                    You can print (request.session.testcollected)
+    request.node: Gives a lot of extra handles. E.g:
+                request.node - Will give you name of test.
+                request.node.fixturenames - Will give name list of fixtures used now.
+                request.node
+    
+    """
+    device = read_config['DEVICE']['name']
+    marker = request.node.get_closest_marker('device_check')
+    if marker:
+        if marker.args[0] != device:
+            msg = marker.kwargs.get("msg")
+            pytest.skip(f"Skipped because: {msg}")
+        
