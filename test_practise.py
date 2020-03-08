@@ -52,3 +52,15 @@ def test_deviceX_1():
                 request.node
     """
     assert 0
+
+dict_dev = [
+            ('a', {'x':True, 'y': False}),
+            ('b',{'x':True, 'y': True}),
+            ('c', {'x':True, 'y': True}),
+            ]
+
+@pytest.mark.parametrize("name, properties", dict_dev)
+def test_dev_props(name, properties):
+    print(name, properties)
+    assert properties['x'] == True
+    assert properties['y'] == True
