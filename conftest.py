@@ -5,10 +5,22 @@ import random
 from pathlib import Path
 
 import pytest
+from _pytest.runner import runtestprotocol
 from py.xml import html
-import pdb
 
 version = "1.2.3"
+
+
+def pytest_runtest_protocol(item, nextitem):
+    """
+    This function is used to catch current status of test running.
+    """
+    reports = runtestprotocol(item, nextitem=nextitem)
+    for report in reports:
+        print(report.when)  # This will show us when the test is in setup, call or teardown
+        if report.when == 'call':
+            print(f'Test Case name: {item.name} --- Result: {report.outcome}')
+    return True
 
 
 @pytest.hookimpl(hookwrapper=True)
@@ -19,7 +31,7 @@ def pytest_runtest_makereport(item):
 
     extra = getattr(report, 'extra', [])
     envi = getattr(report, 'environment', [])
-    extra.append(pytest_html.extras.html("This gets added after every test item"))
+    #extra.append(pytest_html.extras.html("This gets added after every test item"))
     report.extra = extra
 
 
@@ -36,10 +48,15 @@ def pytest_configure(config):
     if not config.option.htmlpath:
         now = datetime.now()
 
-        reports_dir = Path('reports', now.strftime('%Y%m%d'))
-        reports_dir.mkdir(parents=True, exist_ok=True)
+        #reports_dir = Path('reports', now.strftime('%Y%m%d'))
+        reports_dir = Path('reports')
 
-        report = reports_dir / f"report_{now.strftime('%Y%m%d_%H%M')}.html"
+        # This will make a new directory under reports with folder name as yearMonthDate
+        #reports_dir.mkdir(parents=True, exist_ok=True)
+
+        # This will be the report name
+        #report = reports_dir / f"report_{now.strftime('%Y%m%d_%H%M')}.html"
+        report = reports_dir / "report.html"
 
         config.option.htmlpath = report
         config.option.self_contained_html = True
