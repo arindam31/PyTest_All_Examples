@@ -1,4 +1,5 @@
 import configparser
+from collections import namedtuple
 from datetime import datetime
 import random
 
@@ -8,19 +9,41 @@ import pytest
 from _pytest.runner import runtestprotocol
 from py.xml import html
 
+from jinja2 import Environment, FileSystemLoader
+
 version = "1.2.3"
+
+file_loader = FileSystemLoader('templates')
+env = Environment(loader=file_loader)
+
+template = env.get_template('summary.html')
+res_list = []
 
 
 def pytest_runtest_protocol(item, nextitem):
     """
     This function is used to catch current status of test running.
     """
+
     reports = runtestprotocol(item, nextitem=nextitem)
     for report in reports:
         print(report.when)  # This will show us when the test is in setup, call or teardown
         if report.when == 'call':
-            print(f'Test Case name: {item.name} --- Result: {report.outcome}')
+            test_details = {'test': item, 'result': report}
+            res_list.append(test_details)
+
+
+    write_using_jinja(res_list)
     return True
+
+
+def write_using_jinja(result_list):
+    import pdb
+    #pdb.set_trace()
+    html_output = template.render(result_list=result_list)
+    with open("my_report.html", 'w') as fow:
+        fow.write(html_output)
+
 
 
 @pytest.hookimpl(hookwrapper=True)

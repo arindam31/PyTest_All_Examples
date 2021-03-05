@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="table-responsive">
+<table class="table table-sm">
+	<thead class="thead-light">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Test Name</th>
+      <th scope="col">Test Result</th>
+      <th scope="col">Test Summary</th>
+      <th scope="col">Duration</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for item in result_list %}
+	<tr>
+			<td>{{ loop.index }}</td>
+			<td>{{ item.test.name }}</td>
+			<td>{{ item.result.outcome|title }}</td>
+            {% if item.result.outcome == 'failed' %}
+                <td>{{ item.result.longreprtext }}</td>
+
+            {% else %}
+                <td>None</td>
+            {% endif %}
+			<td>{{ item.result.duration }}</td>
+
+	</tr>
+	{% endfor %}
+
+</table>
+    </div>
+{% endblock %}
