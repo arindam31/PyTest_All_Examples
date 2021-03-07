@@ -8,19 +8,50 @@ import pytest
 from _pytest.runner import runtestprotocol
 from py.xml import html
 
+from jinja2 import Environment, FileSystemLoader
+
 version = "1.2.3"
+
+file_loader = FileSystemLoader('templates')
+env = Environment(loader=file_loader)
+
+template = env.get_template('summary.html')
+res_list = []
+tests_count = 0
+
+
+def pytest_runtestloop(session):
+    """
+    This function gets us details about the tests that are collected before running.
+    """
+    global tests_count
+    tests_count = session.testscollected
 
 
 def pytest_runtest_protocol(item, nextitem):
     """
     This function is used to catch current status of test running.
     """
+
     reports = runtestprotocol(item, nextitem=nextitem)
     for report in reports:
-        print(report.when)  # This will show us when the test is in setup, call or teardown
+        if report.outcome == 'skipped':
+            evalxfail = getattr(item, '_evalxfail', None)
+            if evalxfail:
+                report.wasxfail = evalxfail.getexplanation()
+            res_list.append({'test': item, 'result': report})
         if report.when == 'call':
-            print(f'Test Case name: {item.name} --- Result: {report.outcome}')
+            test_details = {'test': item, 'result': report}
+            res_list.append(test_details)
+
+    write_using_jinja(res_list)
     return True
+
+
+def write_using_jinja(result_list):
+    html_output = template.render(result_list=result_list, tests_count=tests_count)
+    with open("my_report.html", 'w') as fow:
+        fow.write(html_output)
 
 
 @pytest.hookimpl(hookwrapper=True)
@@ -31,13 +62,12 @@ def pytest_runtest_makereport(item):
 
     extra = getattr(report, 'extra', [])
     envi = getattr(report, 'environment', [])
-    #extra.append(pytest_html.extras.html("This gets added after every test item"))
+    # extra.append(pytest_html.extras.html("This gets added after every test item"))
     report.extra = extra
 
 
 def pytest_html_report_title(report):
     report.title = "My very own title!"
-
 
 
 def pytest_html_results_summary(prefix):
@@ -48,14 +78,14 @@ def pytest_configure(config):
     if not config.option.htmlpath:
         now = datetime.now()
 
-        #reports_dir = Path('reports', now.strftime('%Y%m%d'))
+        # reports_dir = Path('reports', now.strftime('%Y%m%d'))
         reports_dir = Path('reports')
 
         # This will make a new directory under reports with folder name as yearMonthDate
-        #reports_dir.mkdir(parents=True, exist_ok=True)
+        # reports_dir.mkdir(parents=True, exist_ok=True)
 
         # This will be the report name
-        #report = reports_dir / f"report_{now.strftime('%Y%m%d_%H%M')}.html"
+        # report = reports_dir / f"report_{now.strftime('%Y%m%d_%H%M')}.html"
         report = reports_dir / "report.html"
 
         config.option.htmlpath = report
