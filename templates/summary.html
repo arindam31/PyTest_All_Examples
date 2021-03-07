@@ -14,16 +14,19 @@
     </tr>
   </thead>
   <tbody>
+  <h1>Total Tests: {{ tests_count }}</h1>
   {% for item in result_list %}
 	<tr>
 			<td>{{ loop.index }}</td>
 			<td>{{ item.test.name }}</td>
 			<td>{{ item.result.outcome|title }}</td>
             {% if item.result.outcome == 'failed' %}
-                <td>{{ item.result.longreprtext }}</td>
+                <td word-wrap="break-word">{{ item.result.longrepr }}</td>
 
-            {% else %}
-                <td>None</td>
+            {% endif %}
+
+            {% if item.result.outcome == 'skipped' %}
+                <td>{{item.result.wasxfail}}</td>
             {% endif %}
 			<td>{{ item.result.duration }}</td>
 
