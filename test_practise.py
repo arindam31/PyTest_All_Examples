@@ -63,13 +63,13 @@ def test_deviceX_1():
 
 
 dict_dev = [
-    ('a', {'x': True, 'y': False}),
+    ('a', {'x': True, 'y': True}),
     ('b', {'x': True, 'y': True}),
-    ('c', {'x': True, 'y': True}),
+    pytest.param('c', {'x': True, 'y': False}, marks=pytest.mark.xfail),
 ]
-
 
 @pytest.mark.parametrize("name, properties", dict_dev)
 def test_dev_props(name, properties):
+    """This test is an example of one of the params as failing test """
     assert properties['x']
     assert properties['y']

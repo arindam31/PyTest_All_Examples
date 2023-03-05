@@ -96,10 +96,11 @@ def pytest_configure(config):
 
 
 # *************************************************************************
-# The below 2 functions are used to create command line argument . user can
-# provide a custom config file
+# The below 2 functions are used to create command line argument . 
+# In this case, a user can rovide a custom config file
+
 def pytest_addoption(parser):
-    parser.addoption("--cfg", action="store", default="XYZ", help="Name of DUT type")
+    parser.addoption("--cfg", action="store", default="config.ini", help="Name of config file")
 
 
 @pytest.fixture
