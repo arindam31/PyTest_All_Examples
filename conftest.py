@@ -50,7 +50,7 @@ def pytest_runtest_protocol(item, nextitem):
 
 def write_using_jinja(result_list):
     html_output = template.render(result_list=result_list, tests_count=tests_count)
-    with open("my_report.html", 'w') as fow:
+    with open("reports/my_report.html", 'w') as fow:
         fow.write(html_output)
 
 
