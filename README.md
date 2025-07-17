@@ -1,20 +1,15 @@
+# Introduction
+
+The project aims to show Pytest used for testing different kinds of test subjects
+
+## Project Structure
+Every test is for a specific subject. It can be a web page, a mocked hardware, or a backend service.
+We start our services and then run tests against them.
+
 ## How to run tests:
+- While inside a domain folder, instructions for running test and the product server (if needed) are mentioned in the readme file.
+- Create a venv from the base requirements.txt file in root of project.
+- Then additional Installation packages required are also mentioned in included requirements.txt file. Install them on top of our earlier venv.
 
-The tests optionally can be passed a config file to be present with configurations of device under test.
-The '--cfg' argument can be used to pass the name of the ini file.
-Default: config.ini
-
-```
-pytest test_practise.py --cfg=some_config.ini
-```
-
-If user does not pass the above param, a default value is considered: (config.ini)
-
-## For running tests with coverage:
-```
-python3 -m pytest --cov
-```
-
-## Reports.
-Reports can be found in the report directory. 
-Everytime you run the test, two reports are generated. One by default, and another a custome designed report using Jinja.
+## Projects Tested
+- Mock Embdded Generic Device running GRPC server with services.
