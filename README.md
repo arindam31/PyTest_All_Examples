@@ -7,12 +7,9 @@ Every test is for a specific subject. It can be a web page, a mocked hardware, o
 We start our services and then run tests against them.
 
 ## How to run tests:
+- While inside a domain folder, instructions for running test and the product server (if needed) are mentioned in the readme file.
+- Create a venv from the base requirements.txt file in root of project.
+- Then additional Installation packages required are also mentioned in included requirements.txt file. Install them on top of our earlier venv.
 
-```
-pytest test_practise.py
-```
-
-## For running tests with coverage:
-```
-python3 -m pytest --cov
-```
+## Projects Tested
+- Mock Embdded Generic Device running GRPC server with services.
