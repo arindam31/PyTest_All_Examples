@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+service DeviceService {
+    rpc GetSWInfo(google.protobuf.Empty) returns (SWInfoResponse);
+    rpc GetHWInfo(google.protobuf.Empty) returns (HWInfoResponse);
+}
+
+// Responses
+
+message SWInfoResponse {
+    string version = 1;
+    string build_date = 2;
+    string description = 3;
+}
+
+message HWInfoResponse {
+    string sensor_version = 1;
+    string model_type = 2;
+    string serial_number = 3;
+}
