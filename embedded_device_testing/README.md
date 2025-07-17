@@ -16,3 +16,8 @@ Running tests:
 python -m pytest
 python -m pytest -k "test_get_sw_info"
 ```
+
+Running tests with reports:
+```bash
+pytest --html=report.html
+```
