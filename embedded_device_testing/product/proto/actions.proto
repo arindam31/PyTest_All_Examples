@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+message ToggleRequest {
+  string service_name = 1;
+  bool enable = 2;
+}
+
+message ToggleResponse {
+  string status = 1;
+}
+
+message LogResponse {
+  repeated string lines = 1;
+}
+
+service DeviceActions  {
+    rpc ToggleService(ToggleRequest) returns (ToggleResponse);
+    rpc Reboot(google.protobuf.Empty) returns (google.protobuf.Empty);
+    rpc DoSoftReset(google.protobuf.Empty) returns (google.protobuf.Empty);
+    rpc DoHardReset(google.protobuf.Empty) returns (google.protobuf.Empty);
+    rpc GetDeviceLog(google.protobuf.Empty) returns (LogResponse);
+    rpc ResetState(google.protobuf.Empty) returns (google.protobuf.Empty);
+}
+
