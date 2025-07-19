@@ -1,0 +1,44 @@
+name: Manual gRPC Test
+
+on:
+  workflow_dispatch:  # Manual trigger from GitHub UI
+
+jobs:
+  grpc-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r embedded_device_testing/requirements.txt
+          pip install allure-pytest
+
+      - name: Start gRPC server in background
+        run: |
+          python -m servers.device_server &
+          echo $! > server_pid.txt
+          sleep 3
+
+      - name: Run Pytest with Allure
+        working-directory: ./embedded_device_testing/product
+        run: python -m pytest --alluredir=allure-results
+
+      - name: Stop gRPC server
+        run: |
+          kill $(cat server_pid.txt)
+
+      - name: Upload Allure results
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-results
+          path: embedded_device_testing/product/allure-results/
