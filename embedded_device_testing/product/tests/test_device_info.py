@@ -1,11 +1,15 @@
-import grpc
-import pytest
+import allure
 from google.protobuf.empty_pb2 import Empty
 from product.proto import device_pb2
 from product.proto import device_pb2_grpc
 
 
-def test_get_sw_info(grpc_channel):
+@allure.title("Test software info service")
+@allure.description("This test verifies SW info service returns correct information.")
+@allure.tag("Device Info")
+@allure.severity(allure.severity_level.NORMAL)
+@allure.testcase("TC-105")
+def test_get_sw_info(grpc_channel):    
     stub = device_pb2_grpc.DeviceServiceStub(grpc_channel)
 
     response = stub.GetSWInfo(Empty())
@@ -15,6 +19,11 @@ def test_get_sw_info(grpc_channel):
     assert response.build_date != ""
     assert response.description != ""
 
+@allure.title("Test hardware info service")
+@allure.description("This test verifies HW info service returns correct information.")
+@allure.tag("Device Info")
+@allure.severity(allure.severity_level.NORMAL)
+@allure.testcase("TC-106")
 def test_get_hw_info(grpc_channel):
     stub = device_pb2_grpc.DeviceServiceStub(grpc_channel)
 
