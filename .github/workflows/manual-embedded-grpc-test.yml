@@ -59,16 +59,26 @@ jobs:
         run: |
           kill $(cat server_pid.txt)
 
-      - name: Generate Allure HTML Report
-        working-directory: embedded_device_testing/product
+      - name: Install Homebrew and Allure CLI
+        shell: bash
         run: |
-          allure generate allure-results --clean -o allure-report
+          # Install Homebrew
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+          # Add Homebrew to PATH for this shell session
+          echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> $GITHUB_ENV
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+          # Install allure using brew
+          brew install allure
+
+          # Verify installation
+          allure --version
 
       - name: Generate Allure HTML Report
+        shell: bash
         working-directory: embedded_device_testing/product
         run: |
-          sudo apt update
-          sudo apt install -y allure
           allure generate allure-results --clean -o allure-report
 
       - name: Upload Allure HTML Report
