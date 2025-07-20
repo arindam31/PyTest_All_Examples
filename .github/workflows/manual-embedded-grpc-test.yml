@@ -1,7 +1,7 @@
 name: Manual gRPC Test
 
 on:
-  workflow_dispatch:  # Manual trigger from GitHub UI
+  workflow_dispatch: # Manual trigger from GitHub UI
 
 jobs:
   grpc-test:
@@ -23,7 +23,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install Python dependencies
         run: |
@@ -31,7 +31,7 @@ jobs:
           pip install -r requirements.txt
           pip install -r embedded_device_testing/product/requirements.txt
           pip install allure-pytest
-      
+
       - name: Start gRPC server in background and wait for health
         working-directory: embedded_device_testing/product
         run: |
@@ -65,14 +65,17 @@ jobs:
           # Install Homebrew
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-          # Add Homebrew to PATH for this shell session
-          echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> $GITHUB_ENV
+          # Capture the brew environment variables and append them to $GITHUB_ENV (GITHUB_ENV is a special 
+          # file path automatically provided by GitHub Actions runners during workflow execution)
+          /home/linuxbrew/.linuxbrew/bin/brew shellenv >> $GITHUB_ENV
+
+          # Also evaluate in current shell so brew is available immediately
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
-          # Install allure using brew
+          # Install allure CLI
           brew install allure
 
-          # Verify installation
+          # Verify allure installation
           allure --version
 
       - name: Generate Allure HTML Report
