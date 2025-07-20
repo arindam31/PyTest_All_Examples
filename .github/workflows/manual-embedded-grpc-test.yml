@@ -92,7 +92,7 @@ jobs:
       - name: Upload Allure HTML Report
         uses: actions/upload-pages-artifact@v3
         with:
-          path: allure-report/${{ env.REPORT_SUBFOLDER }}
+          path: site
         
       - name: Deploy to GitHub Pages
         id: deployment
