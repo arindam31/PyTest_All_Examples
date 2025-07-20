@@ -23,11 +23,19 @@ jobs:
           pip install -r embedded_device_testing/product/requirements.txt
           pip install allure-pytest
 
-      - name: Start gRPC server in background
+      - name: Start gRPC server in background and wait for health
+        working-directory: embedded_device_testing/product
         run: |
           python -m servers.device_server &
           echo $! > server_pid.txt
-          sleep 3
+
+          echo "Waiting for gRPC server health check..."
+
+          python ../scripts/wait_for_grpc.py || (
+            echo "Server failed health check. Killing server..."
+            kill $(cat server_pid.txt)
+            exit 1
+          )
 
       - name: Run Pytest with Allure
         working-directory: ./embedded_device_testing/product
