@@ -83,11 +83,17 @@ jobs:
           # Generate Allure report (paths relative to working-directory)
           allure generate allure-results --clean -o ../../allure-report/${REPORT_SUBFOLDER}
 
+      - name: Prepare folder structure for Pages
+        run: |
+          mkdir -p site/${{ env.REPORT_SUBFOLDER }}
+          cp -r allure-report/${{ env.REPORT_SUBFOLDER }}/* site/${{ env.REPORT_SUBFOLDER }}/
+
+
       - name: Upload Allure HTML Report
         uses: actions/upload-pages-artifact@v3
         with:
           path: allure-report/${{ env.REPORT_SUBFOLDER }}
-
+        
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
