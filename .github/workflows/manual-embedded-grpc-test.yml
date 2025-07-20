@@ -42,6 +42,7 @@ jobs:
         run: python -m pytest --alluredir=allure-results
 
       - name: Stop gRPC server
+        working-directory: embedded_device_testing/product
         run: |
           kill $(cat server_pid.txt)
 
