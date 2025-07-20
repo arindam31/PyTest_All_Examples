@@ -1,7 +1,10 @@
-name: Manual gRPC Test
+name: gRPC Test with Pytest and allure
 
 on:
   workflow_dispatch: # Manual trigger from GitHub UI
+
+env:
+  REPORT_SUBFOLDER: embedded_device_testing
 
 jobs:
   grpc-test:
@@ -78,12 +81,12 @@ jobs:
           allure --version
 
           # Generate Allure report (paths relative to working-directory)
-          allure generate allure-results --clean -o allure-report/embedded_device_testing
+          allure generate allure-results --clean -o ../../allure-report/${REPORT_SUBFOLDER}
 
       - name: Upload Allure HTML Report
         uses: actions/upload-pages-artifact@v3
         with:
-          path: embedded_device_testing/product/allure-report/embedded_device_testing
+          path: allure-report/${{ env.REPORT_SUBFOLDER }}
 
       - name: Deploy to GitHub Pages
         id: deployment
