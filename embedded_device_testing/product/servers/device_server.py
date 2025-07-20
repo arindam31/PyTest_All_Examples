@@ -3,11 +3,13 @@ import time
 from datetime import date
 from concurrent import futures
 
+from google.protobuf.empty_pb2 import Empty
+from grpc_health.v1 import health_pb2
+from grpc_health.v1 import health, health_pb2_grpc
 import proto.device_pb2 as device_pb2
 import proto.device_pb2_grpc as device_pb2_grpc
 import proto.actions_pb2 as actions_pb2
 import proto.actions_pb2_grpc as actions_pb2_grpc
-from google.protobuf.empty_pb2 import Empty
 
 
 device_state = {
@@ -73,8 +75,13 @@ class ActionService(actions_pb2_grpc.DeviceActionsServicer):
     
 def start_server():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    health_servicer = health.HealthServicer()
+    health_pb2_grpc.add_HealthServicer_to_server(health_servicer, server)
     device_pb2_grpc.add_DeviceServiceServicer_to_server(servicer=DeviceService(), server=server)
     actions_pb2_grpc.add_DeviceActionsServicer_to_server(servicer=ActionService(), server=server)
+
+    # Set status for health check
+    health_servicer.set("", health_pb2.HealthCheckResponse.SERVING)
 
     # listen on port 50051
     print('Starting server. Listening on port 50051.')
