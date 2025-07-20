@@ -78,10 +78,7 @@ jobs:
           # Verify allure installation
           allure --version
 
-      - name: Generate Allure HTML Report
-        shell: bash
-        working-directory: embedded_device_testing/product
-        run: |
+          # Generate Allure report
           allure generate allure-results --clean -o allure-report
 
       - name: Upload Allure HTML Report
