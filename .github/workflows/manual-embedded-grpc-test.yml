@@ -7,6 +7,15 @@ jobs:
   grpc-test:
     runs-on: ubuntu-latest
 
+    permissions:
+      pages: write
+      id-token: write
+
+    # Deploy to the github-pages environment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -22,6 +31,11 @@ jobs:
           pip install -r requirements.txt
           pip install -r embedded_device_testing/product/requirements.txt
           pip install allure-pytest
+      
+      - name: Install Allure CLI
+        run: |
+          sudo apt update
+          sudo apt install -y allure
 
       - name: Start gRPC server in background and wait for health
         working-directory: embedded_device_testing/product
@@ -37,6 +51,10 @@ jobs:
             exit 1
           )
 
+      - name: Clean previous Allure results
+        working-directory: embedded_device_testing/product
+        run: rm -rf allure-results allure-report
+
       - name: Run Pytest with Allure
         working-directory: ./embedded_device_testing/product
         run: python -m pytest --alluredir=allure-results
@@ -46,8 +64,16 @@ jobs:
         run: |
           kill $(cat server_pid.txt)
 
-      - name: Upload Allure results
-        uses: actions/upload-artifact@v4 # On docs.github.com > Packaging workflow data as artifacts
+      - name: Generate Allure HTML Report
+        working-directory: embedded_device_testing/product
+        run: |
+          allure generate allure-results --clean -o allure-report
+
+      - name: Upload Allure HTML Report
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: allure-results
-          path: embedded_device_testing/product/allure-results/
+          path: embedded_device_testing/product/allure-report
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

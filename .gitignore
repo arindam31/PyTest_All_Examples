@@ -21,3 +21,4 @@ coverage.xml
 # Results
 reports/
 allure-results/
+allure-report/
