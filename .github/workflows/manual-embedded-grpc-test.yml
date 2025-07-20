@@ -32,11 +32,6 @@ jobs:
           pip install -r embedded_device_testing/product/requirements.txt
           pip install allure-pytest
       
-      - name: Install Allure CLI
-        run: |
-          sudo apt update
-          sudo apt install -y allure
-
       - name: Start gRPC server in background and wait for health
         working-directory: embedded_device_testing/product
         run: |
@@ -67,6 +62,13 @@ jobs:
       - name: Generate Allure HTML Report
         working-directory: embedded_device_testing/product
         run: |
+          allure generate allure-results --clean -o allure-report
+
+      - name: Generate Allure HTML Report
+        working-directory: embedded_device_testing/product
+        run: |
+          sudo apt update
+          sudo apt install -y allure
           allure generate allure-results --clean -o allure-report
 
       - name: Upload Allure HTML Report
