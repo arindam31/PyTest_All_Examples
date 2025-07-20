@@ -59,17 +59,16 @@ jobs:
         run: |
           kill $(cat server_pid.txt)
 
-      - name: Install Homebrew and Allure CLI
+      - name: Install Homebrew and Allure CLI, generate Allure report
         shell: bash
+        working-directory: embedded_device_testing/product
         run: |
           # Install Homebrew
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-          # Capture the brew environment variables and append them to $GITHUB_ENV (GITHUB_ENV is a special 
-          # file path automatically provided by GitHub Actions runners during workflow execution)
+          # Capture the brew environment variables and append them to $GITHUB_ENV
           /home/linuxbrew/.linuxbrew/bin/brew shellenv >> $GITHUB_ENV
-
-          # Also evaluate in current shell so brew is available immediately
+          # Evaluate in current shell for immediate use
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
           # Install allure CLI
@@ -78,7 +77,7 @@ jobs:
           # Verify allure installation
           allure --version
 
-          # Generate Allure report
+          # Generate Allure report (paths relative to working-directory)
           allure generate allure-results --clean -o allure-report
 
       - name: Upload Allure HTML Report
