@@ -1,6 +1,6 @@
 # Introduction
 
-The project aims to show Pytest used for testing different kinds of test subjects
+The project aims to show testing demos with products and test scripts and possibly git workflow files to run using git actions and show reports.
 
 ## Project Structure
 Every test is for a specific subject. It can be a web page, a mocked hardware, or a backend service.
